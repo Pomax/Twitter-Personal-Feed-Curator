@@ -1,0 +1,26 @@
+{
+  "name": "Twitter-Personal-Feed-Curator",
+  "version": "0.0.0",
+  "description": "A twitter feed curation thing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"We're not even going to bother with tests.\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pomax/Twitter-Personal-Feed-Curator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Public Domain",
+  "bugs": {
+    "url": "https://github.com/Pomax/Twitter-Personal-Feed-Curator/issues"
+  },
+  "homepage": "https://github.com/Pomax/Twitter-Personal-Feed-Curator",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "express": "^4.15.2",
+    "nunjucks": "^3.0.0",
+    "twit": "^2.2.5"
+  }
+}

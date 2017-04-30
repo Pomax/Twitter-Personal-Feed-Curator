@@ -1,0 +1,28 @@
+.tweet span {
+  border: 1px solid lightblue;
+  background: rgba(180,200,255,0.1);
+  cursor: pointer;
+}
+
+.tweet + .tweet {
+  margin-top: 1em;
+}
+
+.tweet.delete {
+  background: red;
+  color: white;
+}
+
+#delete-them button {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  background: red;
+  color: white;
+  font-variant: small-caps;
+  font-size: 1.5rem;
+}
+
+.hidden {
+  display: none!important;
+}
