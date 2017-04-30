@@ -1,4 +1,4 @@
-const TwitterAPIobject = require('twit') 
+const TwitterAPIobject = require('twit')
 const API = new TwitterAPIobject({
   consumer_key: process.env.CONSUMER_KEY,
   consumer_secret: process.env.CONSUMER_SECRET,
@@ -7,7 +7,7 @@ const API = new TwitterAPIobject({
 });
 
 /**
- * ... ... ... ... ... ... ...
+ * ...
  */
 const getTweets = (req, res, next) => {
   var props = {
@@ -20,12 +20,7 @@ const getTweets = (req, res, next) => {
   if (max_id) { props.max_id = max_id; }
 
   const andthen = (err, data, response) => {
-    res.tweets = data.map(d => {
-      return {
-        id: d.id,
-        text: d.text,
-      }
-    });
+    res.tweets = data;
     next();
   };
 
@@ -33,7 +28,7 @@ const getTweets = (req, res, next) => {
 };
 
 /**
- * ... ... ... ... ... ... ...
+ * ...
  */
 const tweetsAsJSON = (req, res) => {
   res.json(res.tweets);
@@ -43,9 +38,27 @@ const tweetsAsJSON = (req, res) => {
  * Yeah you better believe this is a get and not even a post
  */
 const deleteTweets = (req, res) => {
-  // NO TAKEBAKSIES, THESE TWEETS ARE NOW GONE!
-  const ids = req.query.ids.split(',').map(v => parseInt(v));
-  console.log(ids);
+  const ids = req.query.ids.split(',');
+  const len = ids.length;
+  const last = len - 1;
+
+  console.log(`Deleting ${len} tweets.`);
+
+  ids.forEach( (id,pos) => {
+    console.log(`Deleting ${id}`);
+    API.post(`statuses/destroy/${id}`, { trim_user: true }, (err, data, response) => {
+
+      //  ,--------------------------------------------.
+      //  |                                            |
+      //  | NO TAKEBAKSIES, THESE TWEETS ARE NOW GONE! |
+      //  |                                            |
+      //  `--------------------------------------------'
+
+      if (pos === last) {
+        res.json({ areTheyGone: "Fuck yeah they're gone" });
+      }
+    });
+  });
 };
 
 /**
@@ -53,7 +66,7 @@ const deleteTweets = (req, res) => {
  */
 const setup = app => {
   app.get('/tweets', getTweets, tweetsAsJSON);
-  app.get('/delete', deleteTweets);
+  app.delete('/delete', deleteTweets);
 };
 
 module.exports = { setup };

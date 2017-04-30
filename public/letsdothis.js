@@ -18,7 +18,8 @@ const deleteEverything = () => {
   if (confirm("Are you sure you want to delete these tweets?")) {
     const url = `./delete?ids=${ deletelist.join(',') }`;
     console.log('calling', url);
-    fetch(url)
+
+    fetch(url, { method: 'DELETE' })
     .then(response => response.json())
     .then(json =>  {
       console.log("if this was implemented, these tweets would now be gone.");
@@ -36,19 +37,29 @@ const checkDeleteButton = () => {
 
 const toggleDelete = p => {
   p.classList.toggle("delete");
-  var id = parseInt(p.id.replace('tweet-',''))
+  var id = p.id.replace('tweet-','');
   var pos = deletelist.indexOf(id);
   if (pos === -1) { deletelist.push(id) } else { deletelist.splice(pos,1); }
   checkDeleteButton();
 }
 
-const makeTweet = e => {
+const makeTweet = data => {
   let p = document.createElement('p');
+  let id = data.id_str;
+
+  // link to the tweet, just in case.
+  let a = document.createElement('a');
+  a.href = `https://twitter.com/TheRealPomax/status/${id}`;
+  a.textContent = 'link ';
+  p.appendChild(a);
+
+  // tweet text, because that should be enough to know whether to delete it or not.
   let s = document.createElement('span');
-  s.textContent = e.text;
+  s.textContent = data.text;
   p.appendChild(s);
-  let id = parseInt(e.id);
-  if (!max_id || (max_id && id < max_id)) { max_id = id; } 
+
+  if (!max_id || (max_id && id < max_id)) { max_id = id - 1; }
+
   p.id = `tweet-${id}`;
   p.className = "tweet";
   p.addEventListener("click", evt => toggleDelete(p));
