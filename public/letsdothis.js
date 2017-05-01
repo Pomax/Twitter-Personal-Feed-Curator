@@ -1,7 +1,10 @@
 let tweetCount = 0;
 let tweetCap = 3200;
+let pollInterval = 300;
 var max_id = false;
 var deletelist = [];
+var curTimeMarker = false;
+
 
 let howmany = document.getElementById('howmany');
 let deletespace = document.getElementById('delete-them');
@@ -14,16 +17,45 @@ deletebtn.addEventListener("click", e => {
 let container = document.getElementById('tweets');
 container.innerHTML = "";
 
+const monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
+const getDateMarker = (data) => {
+  var date = new Date(data.created_at);
+  var m = monthNames[date.getMonth()];
+  var y = date.getFullYear();
+  return  `${m} - ${y}`;
+}
+
 const deleteEverything = () => {
   if (confirm("Are you sure you want to delete these tweets?")) {
     const url = `./delete?ids=${ deletelist.join(',') }`;
-    console.log('calling', url);
-
+    // console.log('calling', url);
     fetch(url, { method: 'DELETE' })
     .then(response => response.json())
     .then(json =>  {
-      console.log("if this was implemented, these tweets would now be gone.");
+      console.log("Yeah these are gone.");
     });
+
+    while(deletelist.length) {
+      let id = deletelist.pop();
+      let p = document.getElementById(`tweet-${id}`);
+      if (p) p.parentNode.removeChild(p);
+    };
+
+    checkDeleteButton();
   }
 };
 
@@ -44,8 +76,22 @@ const toggleDelete = p => {
 }
 
 const makeTweet = data => {
+  var marker = getDateMarker(data);
+  if (curTimeMarker !== marker) {
+    curTimeMarker = marker;
+    let h = document.createElement("h2");
+    h.textContent = marker;
+    container.appendChild(h);
+  }
+
   let p = document.createElement('p');
   let id = data.id_str;
+  let pid = `tweet-${id}`;
+
+  // prevent doubles caused by getting "the next set".
+  if (document.querySelector(`#${pid}`)) {
+    return false;
+  }
 
   // link to the tweet, just in case.
   let a = document.createElement('a');
@@ -58,30 +104,33 @@ const makeTweet = data => {
   s.textContent = data.text;
   p.appendChild(s);
 
-  if (!max_id || (max_id && id < max_id)) { max_id = id - 1; }
+  if (!max_id || (max_id && id < max_id)) { max_id = id; }
 
-  p.id = `tweet-${id}`;
+  p.id = pid;
   p.className = "tweet";
   p.addEventListener("click", evt => toggleDelete(p));
   return p;
 };
 
-const getSomeTweets = () => {
+const getSomeTweets = (andThenDoThis) => {
   var url = './tweets' + (max_id ? `?max_id=${max_id}` : '');
-  console.log("fetching", url);
+  // console.log("fetching", url);
   fetch(url)
   .then(response => response.json())
   .then(json =>  {
     const list = json;
-    const elements = list.map(makeTweet);
+    if (list.length === 0) return;
+    const elements = list.map(makeTweet).filter(v => v);
     elements.forEach(e => container.appendChild(e));
     tweetCount += elements.length;
     howmany.textContent = tweetCount;
+    andThenDoThis();
   });
 };
 
 (function runagain() {
   if (tweetCount >= tweetCap) return;
-  getSomeTweets();
-  setTimeout(runagain, 3000);
+  getSomeTweets( () => {
+    setTimeout(runagain, pollInterval);
+  })
 }());

@@ -1,16 +1,31 @@
+h2 {
+  clear: both;
+}
+
 .tweet span {
-  border: 1px solid lightblue;
-  background: rgba(180,200,255,0.1);
   cursor: pointer;
 }
 
-.tweet + .tweet {
-  margin-top: 1em;
+.tweet {
+    width: 21vw;
+    height: 20vh;
+    float: left;
+    margin: 0.5em;
+    background: rgba(180,200,255,0.1);
+    border: 1px solid lightblue;
+    padding: 0.5em;
+    position: relative;
 }
 
 .tweet.delete {
   background: red;
   color: white;
+}
+
+.tweet a {
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 #delete-them button {
@@ -21,6 +36,7 @@
   color: white;
   font-variant: small-caps;
   font-size: 1.5rem;
+  z-index: 10;
 }
 
 .hidden {

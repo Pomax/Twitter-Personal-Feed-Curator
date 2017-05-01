@@ -1,3 +1,5 @@
+var bigInt = require("big-integer");
+
 const TwitterAPIobject = require('twit')
 const API = new TwitterAPIobject({
   consumer_key: process.env.CONSUMER_KEY,
@@ -19,12 +21,16 @@ const getTweets = (req, res, next) => {
   let max_id = req.query.max_id;
   if (max_id) { props.max_id = max_id; }
 
-  const andthen = (err, data, response) => {
+  const andThenDoThis = (err, data, response) => {
+    if (data.length === 1) {
+      console.log(max_id, data);
+      data = [];
+    }
     res.tweets = data;
     next();
   };
 
-  API.get('statuses/user_timeline', props, andthen);
+  API.get('statuses/user_timeline', props, andThenDoThis);
 };
 
 /**
