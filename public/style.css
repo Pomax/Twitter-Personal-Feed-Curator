@@ -1,5 +1,18 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 h2 {
-  clear: both;
+    clear: both;
+    text-transform: capitalize;
+    font-family: Verdana;
+    margin: 1em 0;
+    background: darkblue;
+    color: white;
+    position: relative;
+    top: 1em;
+    margin-bottom: 2em;
 }
 
 .tweet span {

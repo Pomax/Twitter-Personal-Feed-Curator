@@ -23,7 +23,7 @@ const getTweets = (req, res, next) => {
 
   const andThenDoThis = (err, data, response) => {
     if (data.length === 1) {
-      console.log(max_id, data);
+      // console.log(max_id, data);
       data = [];
     }
     res.tweets = data;
